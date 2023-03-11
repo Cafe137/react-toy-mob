@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+import './App.css'
+import { BattleController } from './BattleController'
+import { MobCard } from './MobCard'
+import { MobPicker } from './MobPicker'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [combatants, setCombatants] = useState([])
+
+    function addCombatant(mob) {
+        if (combatants.length < 2) {
+            const clone = { ...mob }
+            setCombatants([...combatants, clone])
+        }
+    }
+
+    return (
+        <div className="App">
+            {combatants.length < 2 ? <MobPicker onAdd={addCombatant} /> : null}
+            <div className="row">
+                {combatants.length === 0 ? <p>Pick 2 mobs!</p> : null}
+                {combatants.length === 1 ? <p>Pick 1 mob!</p> : null}
+            </div>
+            <div className="row gap">
+                {combatants.map((mob, index) => (
+                    <MobCard
+                        key={index}
+                        name={mob.name}
+                        src={mob.src}
+                        health={mob.health}
+                        minDamage={mob.minDamage}
+                        maxDamage={mob.maxDamage}
+                    />
+                ))}
+            </div>
+            {combatants.length === 2 ? <BattleController combatants={combatants} setCombatans={setCombatants} /> : null}
+        </div>
+    )
 }
 
-export default App;
+export default App
